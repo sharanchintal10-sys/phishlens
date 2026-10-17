@@ -33,7 +33,7 @@ def _template(result):
     reasons = result["reasons"][:3]
     text = LEAD[result["verdict"]]
     if result["verdict"] != "safe" and reasons:
-        text += " " + "; ".join(r.rstrip(".") for r in reasons) + "."
+        text += " " + " ".join(r.rstrip(".") + "." for r in reasons)
     return text
 
 
