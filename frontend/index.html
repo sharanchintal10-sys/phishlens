@@ -6,217 +6,202 @@
 <title>PhishLens: check a link, message or QR code</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0F2A3D; --muted:#51697A; --mist:#EDF2F4; --surface:#FFFFFF; --line:#CBD6DC;
-  --brand:#0B6E8A; --brand-ink:#08546B;
-  --safe:#1B7F4F; --safe-bg:#E4F4EB; --warn:#9A5B00; --warn-bg:#FDF0D8; --bad:#B42318; --bad-bg:#FCE6E3;
-  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --body:"Public Sans","Segoe UI",system-ui,sans-serif;
-}
+:root{--bg:#080716;--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.16);--tx:#EEF0FF;--mut:#A3A9CF;
+--cy:#35D6FF;--vi:#8B6CFF;--mg:#FF4FB8;--safe:#3DDC97;--warn:#FFB020;--bad:#FF5C70;
+--d:"Sora","Segoe UI",system-ui,sans-serif;--b:"DM Sans","Segoe UI",system-ui,sans-serif}
 *{box-sizing:border-box}
-html{scroll-padding-top:70px}
-body{margin:0;background:var(--mist);color:var(--ink);font:400 16px/1.55 var(--body)}
+body{margin:0;color:var(--tx);font:400 16px/1.6 var(--b);min-height:100vh;
+background:radial-gradient(700px 480px at calc(12% + var(--px,0)*40px) calc(8% + var(--py,0)*40px),rgba(139,108,255,.50),transparent 62%),radial-gradient(560px 460px at calc(88% - var(--px,0)*50px) calc(18% - var(--py,0)*40px),rgba(53,214,255,.34),transparent 62%),radial-gradient(640px 520px at 58% 96%,rgba(255,79,184,.28),transparent 62%),var(--bg);background-attachment:fixed}
 button,input,textarea{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
-.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-header{background:var(--ink);color:#fff}
-header .wrap{display:flex;align-items:center;gap:24px;min-height:60px;flex-wrap:wrap}
-.logo{display:flex;align-items:center;gap:10px;font:700 21px var(--display);letter-spacing:-.01em}
-nav{display:flex;gap:4px;margin-left:auto}
-nav button{background:none;border:0;color:#C5D6E0;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:500}
-nav button[aria-current=page]{background:#1E4259;color:#fff}
-nav button:hover{color:#fff}
-.status{font-size:13px;color:#9FB8C6;display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:#7C8F9B}
-.dot.on{background:#3DD68C}.dot.off{background:#F0705F}
-main{padding:36px 0 64px}
-h1{font:700 clamp(30px,5vw,46px)/1.08 var(--display);letter-spacing:-.02em;margin:0 0 10px;max-width:16ch}
-.lead{color:var(--muted);max-width:56ch;margin:0 0 26px}
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start}
-@media(max-width:880px){.grid{grid-template-columns:1fr}}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
-.seg{display:inline-flex;background:var(--mist);border-radius:10px;padding:3px;margin-bottom:14px}
-.seg button{border:0;background:none;padding:7px 16px;border-radius:8px;cursor:pointer;font-weight:500;color:var(--muted)}
-.seg button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(15,42,61,.18)}
-textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;resize:vertical}
-textarea:focus,input[type=text]:focus{border-color:var(--brand);outline:none;box-shadow:0 0 0 3px rgba(11,110,138,.18)}
-.drop{display:block;border:2px dashed var(--line);border-radius:12px;padding:28px;text-align:center;color:var(--muted);cursor:pointer}
-.drop:hover,.drop.over{border-color:var(--brand);color:var(--brand-ink)}
-.drop img{max-height:140px;border-radius:8px;display:block;margin:0 auto 10px}
-.actions{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap}
-.btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:11px 22px;font-weight:600;cursor:pointer}
-.btn:hover{background:var(--brand-ink)}
-.btn:disabled{opacity:.6;cursor:wait}
-.btn.ghost{background:none;color:var(--ink);border:1.5px solid var(--line)}
-.btn.ghost:hover{background:var(--mist)}
-.hint{color:var(--muted);font-size:14px}
-.err{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--bad-bg);color:var(--bad);font-size:15px}
+:focus-visible{outline:3px solid var(--cy);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 .hidden{display:none!important}
+.glass{position:relative;background:var(--glass);border:1px solid var(--edge);border-radius:24px;backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 24px 60px rgba(0,0,0,.38)}
+header{position:sticky;top:0;z-index:5;background:rgba(8,7,22,.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--edge)}
+header .wrap{display:flex;align-items:center;gap:20px;min-height:64px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font:800 21px var(--d);letter-spacing:-.02em}
+nav{display:flex;gap:4px;margin-left:auto;background:var(--glass);border:1px solid var(--edge);border-radius:14px;padding:4px}
+nav button{background:none;border:0;color:var(--mut);padding:7px 16px;border-radius:10px;cursor:pointer;font-weight:500}
+nav button:hover{color:#fff}
+nav button[aria-current=page]{background:linear-gradient(135deg,var(--vi),var(--cy));color:#fff}
+.status{font-size:13px;color:var(--mut);display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:#6B7299}.dot.on{background:var(--safe);box-shadow:0 0 12px var(--safe)}.dot.off{background:var(--bad)}
 
-/* result */
-#result{margin-top:22px;border-left:8px solid var(--line)}
-#result.safe{border-left-color:var(--safe)}#result.suspicious{border-left-color:var(--warn)}#result.dangerous{border-left-color:var(--bad)}
-.verdict{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
-.score{font:700 56px/1 var(--display);letter-spacing:-.03em}
-.verdict h2{font:700 24px var(--display);margin:0}
-.safe .score,.safe h2{color:var(--safe)}.suspicious .score,.suspicious h2{color:var(--warn)}.dangerous .score,.dangerous h2{color:var(--bad)}
-.explain{font-size:17px;margin:12px 0 18px;max-width:62ch}
-.anatomy{display:flex;flex-wrap:wrap;align-items:flex-start;font:500 clamp(15px,2.6vw,22px)/1.25 var(--display);margin:6px 0 20px;overflow-wrap:anywhere}
-.seg-a{display:flex;flex-direction:column;padding-right:2px}
-.seg-a span.v{padding:2px 0;color:var(--muted)}
-.seg-a small{font-size:12px;color:var(--muted);font-family:var(--body);border-top:2px solid var(--line);margin-top:4px;padding-top:3px}
-.seg-a.real span.v{color:var(--ink);font-weight:700}
-.seg-a.real small{border-top-color:var(--ink);color:var(--ink);font-weight:600}
-.safe .seg-a.real small{border-top-color:var(--safe)}.suspicious .seg-a.real small{border-top-color:var(--warn)}.dangerous .seg-a.real small{border-top-color:var(--bad)}
-.dangerous .seg-a.real span.v{color:var(--bad)}
-h3{font:700 16px var(--display);margin:20px 0 8px}
-.reasons{margin:0;padding:0;list-style:none}
-.reasons li{padding:8px 0 8px 22px;border-top:1px solid var(--line);position:relative}
-.reasons li::before{content:"";position:absolute;left:2px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.dangerous .reasons li::before{background:var(--bad)}.suspicious .reasons li::before{background:var(--warn)}.safe .reasons li::before{background:var(--safe)}
-.advice{margin:0;padding-left:20px}.advice li{margin:4px 0}
-.bars{display:grid;gap:10px}
-.bar{display:grid;grid-template-columns:140px 1fr 36px;gap:10px;align-items:center;font-size:14px}
-.track{height:8px;background:var(--mist);border-radius:6px;overflow:hidden}
-.fill{height:100%;width:0;background:var(--brand);transition:width .6s ease-out}
-.fb{border-top:1px solid var(--line);margin-top:20px;padding-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.fb .hint{margin-right:6px}
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:44px;align-items:center;padding:64px 0 40px}
+@media(max-width:900px){.hero{grid-template-columns:1fr;gap:30px;padding-top:40px}}
+h1{font:800 clamp(36px,5.6vw,62px)/1.04 var(--d);letter-spacing:-.035em;margin:0 0 16px}
+.lead{color:var(--mut);font-size:18px;max-width:46ch;margin:0 0 26px}
+.mini{display:flex;gap:12px;flex-wrap:wrap}
+.mini div{padding:12px 16px;border-radius:16px;font-size:14px;color:var(--mut)}
+.mini b{display:block;font:700 15px var(--d);color:var(--tx)}
+.scan-card{padding:22px;position:relative;overflow:hidden}
+.sweep{position:absolute;left:0;top:0;height:3px;width:40%;background:linear-gradient(90deg,transparent,var(--cy),var(--mg),transparent);opacity:0}
+.scanning .sweep{opacity:1;animation:sweep 1s linear infinite}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(260%)}}
+.seg{display:inline-flex;background:rgba(0,0,0,.28);border:1px solid var(--edge);border-radius:13px;padding:4px;margin-bottom:16px}
+.seg button{border:0;background:none;padding:8px 18px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--mut)}
+.seg button[aria-pressed=true]{background:linear-gradient(135deg,var(--vi),var(--cy));color:#fff}
+textarea,input[type=text]{width:100%;border:1px solid var(--edge);border-radius:14px;padding:15px 16px;background:rgba(8,7,22,.55);color:var(--tx);resize:vertical;font-size:17px}
+textarea::placeholder,input::placeholder{color:#7F86B0}
+textarea:focus,input[type=text]:focus{border-color:var(--cy);outline:none;box-shadow:0 0 0 4px rgba(53,214,255,.18)}
+.drop{display:block;border:2px dashed var(--edge);border-radius:14px;padding:26px;text-align:center;color:var(--mut);cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--cy);color:var(--cy)}
+.drop img{max-height:130px;border-radius:10px;display:block;margin:0 auto 10px}
+.actions{display:flex;gap:14px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.btn{background:linear-gradient(135deg,var(--vi),var(--cy));color:#fff;border:0;border-radius:14px;padding:13px 26px;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 10px 30px rgba(139,108,255,.4)}
+.btn:hover{filter:brightness(1.1)}.btn:disabled{opacity:.65;cursor:wait}
+.btn.ghost{background:var(--glass);border:1px solid var(--edge);box-shadow:none;padding:9px 16px;font-size:15px;font-weight:600}
+.btn.ghost:hover{background:rgba(255,255,255,.14)}
+.hint{color:var(--mut);font-size:14px}
+.err{margin-top:14px;padding:12px 14px;border-radius:12px;background:rgba(255,92,112,.14);border:1px solid rgba(255,92,112,.4);color:#FFB3BD}
+.try{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:16px;color:var(--mut);font-size:14px}
+.chip{background:var(--glass);color:var(--tx);border:1px solid var(--edge);border-radius:20px;padding:6px 14px;font-size:14px;cursor:pointer}
+.chip:hover{background:rgba(255,255,255,.15)}
 
-aside .panel{margin-bottom:18px}
-aside h3{margin-top:0}
-aside ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px}
-aside li{margin:6px 0}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:var(--mist);border:0;border-radius:20px;padding:6px 12px;font-size:14px;cursor:pointer}
-.chip:hover{background:#DDE7EC}
+/* result bento */
+#result{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:26px;--c:var(--mut)}
+#result.safe{--c:var(--safe)}#result.suspicious{--c:var(--warn)}#result.dangerous{--c:var(--bad)}
+#result>div{padding:24px}
+.t-gauge{grid-column:span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-color:color-mix(in srgb,var(--c) 55%,transparent)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 70px color-mix(in srgb,var(--c) 28%,transparent)!important}
+.t-explain{grid-column:span 4}.t-reasons,.t-bars{grid-column:span 3}.t-advice{grid-column:span 6}.t-fb{grid-column:span 6;padding:16px 22px!important;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+@media(max-width:860px){#result>div{grid-column:span 6!important}}
+.gauge{position:relative;width:176px;height:176px;margin-bottom:10px}
+.gauge svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge .bg{stroke:rgba(255,255,255,.1)}
+.gauge .arc{stroke:var(--c);transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 0 8px var(--c))}
+.gauge .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.num b{font:800 54px/1 var(--d);letter-spacing:-.04em;color:var(--c)}.num span{font-size:12px;color:var(--mut)}
+h2{font:800 clamp(24px,3.6vw,34px)/1.1 var(--d);margin:0;letter-spacing:-.02em;color:var(--c)}
+.t-gauge h2{font-size:26px}
+.explain{font-size:17px;margin:0 0 18px;max-width:60ch}
+.t-explain h3{margin-bottom:6px;color:var(--mut);font-weight:500}
+.anatomy{display:flex;flex-wrap:wrap;font:600 clamp(15px,2.3vw,21px)/1.25 var(--d);overflow-wrap:anywhere;padding:14px 16px;border-radius:16px;background:rgba(0,0,0,.3);border:1px solid var(--edge)}
+.seg-a{display:flex;flex-direction:column}
+.seg-a .v{color:#8890BD}
+.seg-a small{font-size:12px;color:var(--mut);font-family:var(--b);font-weight:400;border-top:2px solid var(--edge);margin-top:5px;padding-top:3px}
+.seg-a.real .v{color:#fff;font-weight:800}.seg-a.real small{color:var(--tx);font-weight:600;border-top-color:var(--c)}
+.dangerous .seg-a.real .v{color:var(--bad)}
+h3{font:700 16px var(--d);margin:0 0 12px}
+.reasons,.advice{margin:0;padding:0;list-style:none}
+.reasons li,.advice li{padding:7px 0 7px 24px;position:relative;font-size:15px}
+.reasons li::before,.advice li::before{content:"";position:absolute;left:3px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
+.advice li::before{border-radius:3px;background:var(--cy);box-shadow:0 0 10px var(--cy)}
+.advice{columns:2 300px;column-gap:30px}.advice li{break-inside:avoid}
+.bars{display:grid;gap:18px}
+.bar{font-size:14px}.bar div.l{display:flex;justify-content:space-between;margin-bottom:6px}
+.track{height:10px;background:rgba(255,255,255,.09);border-radius:6px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--vi),var(--cy));border-radius:6px;transition:width .9s ease-out}
 
-/* history */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
-.stat b{display:block;font:700 28px var(--display)}
-.stat span{font-size:14px;color:var(--muted)}
-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:15px}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:#F6F9FA;font-weight:600}
-td.t{max-width:420px;overflow-wrap:anywhere}
-.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:600}
-.tag.safe{background:var(--safe-bg);color:var(--safe)}.tag.suspicious{background:var(--warn-bg);color:var(--warn)}.tag.dangerous{background:var(--bad-bg);color:var(--bad)}
-.scroll{overflow-x:auto}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:70px}
+@media(max-width:760px){.how{grid-template-columns:1fr}}
+.how div{padding:22px;position:relative;overflow:hidden}
+.how div::before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,var(--vi),var(--cy),var(--mg))}
+.how b{font:700 17px var(--d);display:block;margin-bottom:6px}.how span{color:var(--mut);font-size:15px}
 
-/* learn */
-.quiz-card{max-width:680px}
-.quote{background:var(--mist);border-radius:10px;padding:14px 16px;margin:12px 0;overflow-wrap:anywhere}
-.fb-q{margin-top:12px;padding:12px 14px;border-radius:10px}
-.fb-q.good{background:var(--safe-bg);color:#14583A}.fb-q.bad{background:var(--bad-bg);color:#7A1810}
-.tips{columns:2 280px;gap:28px;margin-top:8px}
-.tips p{break-inside:avoid;margin:0 0 12px}
-@media(prefers-reduced-motion:reduce){.fill{transition:none}}
+.page{padding:48px 0 70px}
+.page h1{font-size:clamp(30px,5vw,46px)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:18px}
+.stat{padding:18px}.stat b{display:block;font:800 30px var(--d)}.stat span{font-size:14px;color:var(--mut)}
+.scroll{overflow-x:auto;border-radius:20px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--edge);vertical-align:top}
+th{background:rgba(255,255,255,.06);font-weight:600;color:var(--mut)}td.t{max-width:420px;overflow-wrap:anywhere}
+.tag{display:inline-block;padding:2px 12px;border-radius:12px;font-size:13px;font-weight:600}
+.tag.safe{background:rgba(61,220,151,.16);color:var(--safe)}.tag.suspicious{background:rgba(255,176,32,.16);color:var(--warn)}.tag.dangerous{background:rgba(255,92,112,.16);color:var(--bad)}
+.panel{padding:24px;max-width:680px}
+.quote{background:rgba(0,0,0,.3);border:1px solid var(--edge);border-radius:14px;padding:14px 16px;margin:12px 0;overflow-wrap:anywhere}
+.fq{margin-top:12px;padding:12px 14px;border-radius:12px}.fq.good{background:rgba(61,220,151,.14);color:#9BF0C8}.fq.bad{background:rgba(255,92,112,.14);color:#FFB3BD}
+.tips{columns:2 280px;gap:28px;margin-top:8px;color:var(--mut)}.tips p{break-inside:avoid;margin:0 0 12px}.tips b{color:var(--tx)}
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.14),transparent 60%)}
+.glass:hover::after{opacity:1}
+#result>div{transition:transform .25s ease}
+#result>div:hover{transform:translateY(-4px)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+#result.reveal>div{animation:rise .55s cubic-bezier(.2,.8,.2,1) backwards}
+#result.reveal>div:nth-child(2){animation-delay:.1s}#result.reveal>div:nth-child(3){animation-delay:.2s}#result.reveal>div:nth-child(4){animation-delay:.3s}#result.reveal>div:nth-child(5){animation-delay:.4s}#result.reveal>div:nth-child(6){animation-delay:.5s}
+.live{margin-top:10px;font-size:14px;color:var(--mut);min-height:21px}.live b{color:var(--cy);font-weight:600}
+.btn,.chip{transition:transform .15s,filter .15s,background .15s}.btn:active{transform:scale(.97)}.chip:hover{transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){.scanning .sweep{animation:none;width:100%}.arc,.fill{transition:none}#result.reveal>div{animation:none}}
 </style>
 </head>
 <body>
 <header><div class="wrap">
-  <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="#6FD3EE" stroke-width="3"/><path d="M17 17l6 6" stroke="#6FD3EE" stroke-width="3" stroke-linecap="round"/><path d="M7.5 11.2l2.4 2.4 4.2-4.6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PhishLens</div>
-  <nav aria-label="Sections">
-    <button data-view="scan" aria-current="page">Scan</button>
-    <button data-view="history">History</button>
-    <button data-view="learn">Learn</button>
-  </nav>
+  <div class="logo"><svg width="28" height="28" viewBox="0 0 26 26" fill="none" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#35D6FF"/><stop offset="1" stop-color="#FF4FB8"/></linearGradient></defs><circle cx="11" cy="11" r="8" stroke="url(#lg)" stroke-width="3"/><path d="M17 17l6 6" stroke="url(#lg)" stroke-width="3" stroke-linecap="round"/><path d="M7.5 11.2l2.4 2.4 4.2-4.6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>PhishLens</div>
+  <nav aria-label="Sections"><button data-view="scan" aria-current="page">Scan</button><button data-view="history">History</button><button data-view="learn">Learn</button></nav>
   <div class="status" id="status"><span class="dot"></span><span>Checking scanner…</span></div>
 </div></header>
 
-<main><div class="wrap">
-
-<!-- SCAN -->
-<section id="view-scan">
-  <h1>Is this link, message or QR code safe?</h1>
-  <p class="lead">Paste what you received. PhishLens checks the web address, the wording and known threat lists, then tells you why in plain language.</p>
-  <div class="grid">
+<section id="view-scan"><div class="wrap">
+  <div class="hero">
     <div>
-      <div class="panel">
-        <div class="seg" role="group" aria-label="What do you want to check?">
-          <button data-mode="url" aria-pressed="true">Link</button>
-          <button data-mode="text" aria-pressed="false">Message</button>
-          <button data-mode="qr" aria-pressed="false">QR image</button>
-        </div>
-        <div id="in-url"><input type="text" id="url" placeholder="https://example.com/login" autocomplete="off" spellcheck="false" aria-label="Link to check"></div>
-        <div id="in-text" class="hidden"><textarea id="text" rows="6" placeholder="Paste the email, SMS or chat message here" aria-label="Message to check"></textarea></div>
-        <div id="in-qr" class="hidden">
-          <label class="drop" id="drop"><input type="file" id="file" accept="image/*" class="hidden"><span id="drop-msg">Drop a photo or screenshot of a QR code here, or click to choose one</span></label>
-        </div>
-        <div class="actions">
-          <button class="btn" id="go">Check for phishing</button>
-          <span class="hint" id="hint">We never open the link for you.</span>
-        </div>
-        <div class="err hidden" id="err" role="alert"></div>
-      </div>
-
-      <div class="panel hidden" id="result" aria-live="polite">
-        <div class="verdict"><div class="score" id="r-score">0</div><h2 id="r-title"></h2></div>
-        <p class="explain" id="r-explain"></p>
-        <div class="anatomy hidden" id="r-anatomy" aria-label="Parts of the link"></div>
-        <h3>What we found</h3>
-        <ul class="reasons" id="r-reasons"></ul>
-        <h3>How the risk was worked out</h3>
-        <div class="bars" id="r-bars"></div>
-        <h3>What to do</h3>
-        <ul class="advice" id="r-advice"></ul>
-        <div class="fb" id="fb">
-          <span class="hint">Was this wrong? Your answer teaches the scanner.</span>
-          <button class="btn ghost" data-fb="phishing">It’s phishing</button>
-          <button class="btn ghost" data-fb="safe">It’s safe</button>
-        </div>
+      <h1>Is this link, message or QR code safe?</h1>
+      <p class="lead">Paste what you received. PhishLens inspects the address, the wording and known threat lists, then explains the verdict in plain language.</p>
+      <div class="mini">
+        <div class="glass"><b>Real time</b>Answers in seconds</div>
+        <div class="glass"><b>Three signals</b>Link, wording, threat lists</div>
+        <div class="glass"><b>Self-improving</b>Learns from your feedback</div>
       </div>
     </div>
-
-    <aside>
-      <div class="panel">
-        <h3>Try an example</h3>
-        <div class="chips">
-          <button class="chip" data-ex="bank">Fake bank link</button>
-          <button class="chip" data-ex="prize">Prize SMS</button>
-          <button class="chip" data-ex="trick">Look-alike domain</button>
-          <button class="chip" data-ex="real">Real site</button>
+    <div>
+      <div class="scan-card glass" id="card">
+        <div class="sweep"></div>
+        <div class="seg" role="group" aria-label="What do you want to check?">
+          <button data-mode="url" aria-pressed="true">Link</button><button data-mode="text" aria-pressed="false">Message</button><button data-mode="qr" aria-pressed="false">QR image</button>
         </div>
+        <div id="in-url"><input type="text" id="url" placeholder="https://example.com/login" autocomplete="off" spellcheck="false" aria-label="Link to check"><div class="live" id="live"></div></div>
+        <div id="in-text" class="hidden"><textarea id="text" rows="5" placeholder="Paste the email, SMS or chat message here" aria-label="Message to check"></textarea></div>
+        <div id="in-qr" class="hidden"><label class="drop" id="drop"><input type="file" id="file" accept="image/*" class="hidden"><span id="drop-msg">Drop a photo or screenshot of a QR code here, or click to choose one</span></label></div>
+        <div class="actions"><button class="btn" id="go">Check for phishing</button><span class="hint" id="hint">We never open the link for you.</span></div>
+        <div class="err hidden" id="err" role="alert"></div>
       </div>
-      <div class="panel">
-        <h3>What gets checked</h3>
-        <ul>
-          <li>The address itself: odd endings, hidden characters, fake brand names</li>
-          <li>The wording: urgency, threats, requests for OTPs or passwords</li>
-          <li>Threat lists, plus corrections from people using the scanner</li>
-        </ul>
+      <div class="try"><span>Try an example:</span>
+        <button class="chip" data-ex="bank">Fake bank link</button><button class="chip" data-ex="prize">Prize SMS</button><button class="chip" data-ex="trick">Look-alike domain</button><button class="chip" data-ex="real">Real site</button>
       </div>
-    </aside>
+    </div>
   </div>
-</section>
 
-<!-- HISTORY -->
-<section id="view-history" class="hidden">
-  <h1>Scan history</h1>
-  <p class="lead">Everything checked on this scanner, newest first.</p>
+  <div class="hidden" id="result" aria-live="polite">
+    <div class="t-gauge glass">
+      <div class="gauge"><svg viewBox="0 0 160 160" fill="none"><circle class="bg" cx="80" cy="80" r="70" stroke-width="13"/><circle class="arc" id="g-arc" cx="80" cy="80" r="70" stroke-width="13" stroke-linecap="round" stroke-dasharray="439.8" stroke-dashoffset="439.8"/></svg>
+        <div class="num"><b id="r-score">0</b><span>risk out of 100</span></div></div>
+      <h2 id="r-title"></h2>
+    </div>
+    <div class="t-explain glass"><p class="explain" id="r-explain"></p><div class="anatomy hidden" id="r-anatomy" aria-label="Parts of the link"></div></div>
+    <div class="t-reasons glass"><h3>What we found</h3><ul class="reasons" id="r-reasons"></ul></div>
+    <div class="t-bars glass"><h3>How the risk was worked out</h3><div class="bars" id="r-bars"></div></div>
+    <div class="t-advice glass"><h3>What to do</h3><ul class="advice" id="r-advice"></ul></div>
+    <div class="t-fb glass" id="fb"></div>
+  </div>
+
+  <div class="how">
+    <div class="glass"><b>The address</b><span>Odd endings, look-alike characters and fake brand names are caught before you click.</span></div>
+    <div class="glass"><b>The wording</b><span>Urgency, threats and requests for OTPs or passwords give scams away, even when the writing is polished.</span></div>
+    <div class="glass"><b>Threat lists and feedback</b><span>Known bad sites are blocked, and your corrections teach the scanner.</span></div>
+  </div>
+</div></section>
+
+<section id="view-history" class="hidden page"><div class="wrap">
+  <h1>Scan history</h1><p class="lead">Everything checked on this scanner, newest first.</p>
   <div class="stats" id="stats"></div>
-  <div class="scroll"><table><thead><tr><th>When</th><th>Type</th><th>What was checked</th><th>Risk</th><th>Verdict</th></tr></thead><tbody id="hist"></tbody></table></div>
+  <div class="scroll glass"><table><thead><tr><th>When</th><th>Type</th><th>What was checked</th><th>Risk</th><th>Verdict</th></tr></thead><tbody id="hist"></tbody></table></div>
   <p class="hint hidden" id="hist-empty">Nothing scanned yet. Check a link on the Scan tab and it will show up here.</p>
-</section>
+</div></section>
 
-<!-- LEARN -->
-<section id="view-learn" class="hidden">
-  <h1>Can you spot the phish?</h1>
-  <p class="lead">Six quick examples. Decide whether each one is phishing or legitimate.</p>
-  <div class="panel quiz-card" id="quiz"></div>
+<section id="view-learn" class="hidden page"><div class="wrap">
+  <h1>Can you spot the phish?</h1><p class="lead">Six quick examples. Decide whether each one is phishing or legitimate.</p>
+  <div class="panel glass" id="quiz"></div>
   <h3 style="margin-top:34px">Red flags worth remembering</h3>
   <div class="tips">
     <p><b>The real website is just before the first single slash.</b> In <i>paypal.com.verify-now.top/login</i> the site is verify-now.top, not PayPal.</p>
-    <p><b>Urgency is a tactic.</b> Real banks don’t threaten to lock your account in 24 hours over a text message.</p>
-    <p><b>Nobody legitimate asks for your OTP, PIN or password.</b> Not support staff, not delivery companies, not the bank.</p>
+    <p><b>Urgency is a tactic.</b> Real banks don’t threaten to lock your account in 24 hours by text.</p>
+    <p><b>Nobody legitimate asks for your OTP, PIN or password.</b></p>
     <p><b>Scanning a QR code never receives money.</b> A UPI code only sends payments.</p>
     <p><b>Go to the source.</b> Type the official address yourself or use the official app.</p>
-    <p><b>Polished writing proves nothing.</b> AI tools make phishing messages grammatically perfect, so check the address and the request instead.</p>
+    <p><b>Polished writing proves nothing.</b> AI tools make scams grammatically perfect, so check the address and the request.</p>
   </div>
-</section>
-
-</div></main>
+</div></section>
 
 <script>
 const API = location.protocol === "file:" ? "http://localhost:8000" : "";
@@ -224,7 +209,6 @@ const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 let mode = "url", last = null, file = null;
 
-/* ---------- navigation ---------- */
 document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
   document.querySelectorAll("nav button").forEach((x) => x.removeAttribute("aria-current"));
   b.setAttribute("aria-current", "page");
@@ -233,25 +217,18 @@ document.querySelectorAll("nav button").forEach((b) => b.onclick = () => {
   if (b.dataset.view === "learn" && !quiz.started) startQuiz();
 });
 
-/* ---------- health ---------- */
 async function health() {
-  const s = $("status");
   try {
     const h = await (await fetch(API + "/health")).json();
-    s.innerHTML = '<span class="dot on"></span><span>Scanner online' + (h.url_model ? ", AI models loaded" : ", rules only") + "</span>";
-  } catch {
-    s.innerHTML = '<span class="dot off"></span><span>Scanner offline</span>';
-  }
+    $("status").innerHTML = '<span class="dot on"></span><span>Scanner online' + (h.url_model ? ", AI models loaded" : ", rules only") + "</span>";
+  } catch { $("status").innerHTML = '<span class="dot off"></span><span>Scanner offline</span>'; }
 }
 
-/* ---------- input modes ---------- */
 document.querySelectorAll(".seg button").forEach((b) => b.onclick = () => setMode(b.dataset.mode));
 function setMode(m) {
   mode = m;
   document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x.dataset.mode === m));
-  $("in-url").classList.toggle("hidden", m !== "url");
-  $("in-text").classList.toggle("hidden", m !== "text");
-  $("in-qr").classList.toggle("hidden", m !== "qr");
+  ["url", "text", "qr"].forEach((k) => $("in-" + k).classList.toggle("hidden", k !== m));
   $("hint").textContent = m === "qr" ? "The image is only read for its QR code." : "We never open the link for you.";
 }
 $("file").onchange = (e) => pickFile(e.target.files[0]);
@@ -262,31 +239,26 @@ drop.addEventListener("drop", (e) => pickFile(e.dataTransfer.files[0]));
 function pickFile(f) {
   if (!f) return;
   file = f;
-  const url = URL.createObjectURL(f);
-  $("drop-msg").innerHTML = '<img src="' + url + '" alt="Selected QR image">' + esc(f.name);
+  $("drop-msg").innerHTML = '<img src="' + URL.createObjectURL(f) + '" alt="Selected QR image">' + esc(f.name);
 }
 $("url").addEventListener("keydown", (e) => { if (e.key === "Enter") scan(); });
 
-const EXAMPLES = {
+const EX = {
   bank: ["url", "http://hdfc-secure-kyc.xyz/login"],
   trick: ["url", "https://paypal.com.account-verify.top/signin"],
   real: ["url", "https://github.com/login"],
   prize: ["text", "Dear customer, you’ve won a ₹50,000 cashback prize! Claim your reward within 24 hours at http://bit.ly/3xAmple and confirm your bank details and OTP."],
 };
 document.querySelectorAll("[data-ex]").forEach((b) => b.onclick = () => {
-  const [m, v] = EXAMPLES[b.dataset.ex];
-  setMode(m);
-  $(m === "url" ? "url" : "text").value = v;
-  scan();
+  const [m, v] = EX[b.dataset.ex]; setMode(m); $(m === "url" ? "url" : "text").value = v; scan();
 });
 
-/* ---------- scanning ---------- */
 async function scan() {
-  const err = $("err"), btn = $("go");
+  const err = $("err"), btn = $("go"), card = $("card");
   err.classList.add("hidden");
   let res;
   try {
-    btn.disabled = true; btn.textContent = "Checking…";
+    btn.disabled = true; btn.textContent = "Checking…"; card.classList.add("scanning");
     if (mode === "qr") {
       if (!file) throw new Error("Choose an image that contains a QR code first.");
       const fd = new FormData(); fd.append("file", file);
@@ -304,9 +276,7 @@ async function scan() {
   } catch (e) {
     err.textContent = e instanceof TypeError ? "Can’t reach the scanner. Start it with: uvicorn main:app --port 8000 (inside the backend folder)." : e.message;
     err.classList.remove("hidden");
-  } finally {
-    btn.disabled = false; btn.textContent = "Check for phishing";
-  }
+  } finally { btn.disabled = false; btn.textContent = "Check for phishing"; card.classList.remove("scanning"); }
 }
 $("go").onclick = scan;
 
@@ -315,68 +285,60 @@ const SIGNALS = { link: "Link patterns", intel: "Threat intelligence", wording: 
 
 function render(r) {
   last = r;
-  const box = $("result");
-  box.className = "panel " + r.verdict;
-  $("r-score").textContent = r.score;
-  $("r-title").textContent = TITLES[r.verdict] + " (risk " + r.score + " out of 100)";
+  const box = $("result"), C = 439.8;
+  box.className = r.verdict + " reveal";
+  countUp($("r-score"), r.score);
+  $("r-title").textContent = TITLES[r.verdict];
   $("r-explain").textContent = r.explanation;
   const an = $("r-anatomy");
   if (r.anatomy) {
     const a = r.anatomy;
     const part = (v, cap, real) => v ? '<div class="seg-a' + (real ? " real" : "") + '"><span class="v">' + esc(v) + "</span><small>" + cap + "</small></div>" : "";
-    an.innerHTML =
-      part(a.scheme + "://", "protocol") +
-      part(a.subdomain ? a.subdomain + "." : "", "subdomain") +
-      part(a.domain, "the real website", true) +
-      part(a.path === "/" ? "" : a.path, "page on that site");
+    an.innerHTML = part(a.scheme + "://", "protocol") + part(a.subdomain ? a.subdomain + "." : "", "subdomain") + part(a.domain, "the real website", true) + part(a.path === "/" ? "" : a.path, "page on that site");
     an.classList.remove("hidden");
   } else an.classList.add("hidden");
   $("r-reasons").innerHTML = r.reasons.map((x) => "<li>" + esc(x) + "</li>").join("");
   $("r-bars").innerHTML = Object.entries(r.signals).map(([k, v]) =>
-    '<div class="bar"><span>' + (SIGNALS[k] || k) + '</span><div class="track"><div class="fill" data-w="' + v + '"></div></div><b>' + v + "</b></div>").join("");
-  requestAnimationFrame(() => document.querySelectorAll(".fill").forEach((f) => f.style.width = f.dataset.w + "%"));
+    '<div class="bar"><div class="l"><span>' + (SIGNALS[k] || k) + "</span><b>" + v + '</b></div><div class="track"><div class="fill" data-w="' + v + '"></div></div></div>').join("");
   $("r-advice").innerHTML = r.advice.map((x) => "<li>" + esc(x) + "</li>").join("");
   $("fb").innerHTML = '<span class="hint">Was this wrong? Your answer teaches the scanner.</span><button class="btn ghost" data-fb="phishing">It’s phishing</button><button class="btn ghost" data-fb="safe">It’s safe</button>';
+  const arc = $("g-arc");
+  arc.style.transition = "none"; arc.style.strokeDashoffset = C;
   box.classList.remove("hidden");
-  box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    arc.style.transition = ""; arc.style.strokeDashoffset = C * (1 - r.score / 100);
+    document.querySelectorAll(".fill").forEach((f) => f.style.width = f.dataset.w + "%");
+  }));
+  box.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 document.addEventListener("click", async (e) => {
   const b = e.target.closest("[data-fb]");
   if (!b || !last) return;
-  const kind = last.kind === "qr" ? "qr" : last.kind;
-  const target = last.decoded || last.target;
   try {
     await fetch(API + "/feedback", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ scan_id: last.id, kind, target, user_label: b.dataset.fb, predicted: last.verdict }) });
+      body: JSON.stringify({ scan_id: last.id, kind: last.kind, target: last.decoded || last.target, user_label: b.dataset.fb, predicted: last.verdict }) });
     $("fb").innerHTML = '<span class="hint">Thanks. Your correction was saved and will be used the next time this is scanned.</span>';
-  } catch {
-    $("fb").innerHTML = '<span class="hint">Couldn’t save your correction. Check that the scanner is running.</span>';
-  }
+  } catch { $("fb").innerHTML = '<span class="hint">Couldn’t save your correction. Check that the scanner is running.</span>'; }
 });
 
-/* ---------- history ---------- */
 async function loadHistory() {
   try {
     const [s, h] = await Promise.all([fetch(API + "/stats").then((r) => r.json()), fetch(API + "/history").then((r) => r.json())]);
-    const st = [["Scans", s.total], ["Safe", s.safe], ["Suspicious", s.suspicious], ["Dangerous", s.dangerous], ["Corrections", s.feedback]];
-    $("stats").innerHTML = st.map(([l, v]) => '<div class="stat"><b>' + v + "</b><span>" + l + "</span></div>").join("");
-    $("hist").innerHTML = h.map((x) =>
-      "<tr><td>" + new Date(x.ts * 1000).toLocaleString() + "</td><td>" + esc(x.kind) + '</td><td class="t">' + esc(x.target.slice(0, 160)) +
+    $("stats").innerHTML = [["Scans", s.total], ["Safe", s.safe], ["Suspicious", s.suspicious], ["Dangerous", s.dangerous], ["Corrections", s.feedback]]
+      .map(([l, v]) => '<div class="stat glass"><b>' + v + "</b><span>" + l + "</span></div>").join("");
+    $("hist").innerHTML = h.map((x) => "<tr><td>" + new Date(x.ts * 1000).toLocaleString() + "</td><td>" + esc(x.kind) + '</td><td class="t">' + esc(x.target.slice(0, 160)) +
       "</td><td>" + x.score + '</td><td><span class="tag ' + x.verdict + '">' + TITLES[x.verdict] + "</span></td></tr>").join("");
     $("hist-empty").classList.toggle("hidden", h.length > 0);
-  } catch {
-    $("hist").innerHTML = '<tr><td colspan="5">Can’t reach the scanner, so history isn’t available.</td></tr>';
-  }
+  } catch { $("hist").innerHTML = '<tr><td colspan="5">Can’t reach the scanner, so history isn’t available.</td></tr>'; }
 }
 
-/* ---------- quiz (works offline) ---------- */
 const QUIZ = [
   { t: "https://accounts.google.com/signin", p: false, w: "The real website is google.com, and ‘accounts’ is just a section of it." },
   { t: "Your SBI account is blocked. Update your KYC within 24 hours: http://sbi-kyc-update.online/verify", p: true, w: "Urgency, a KYC threat and an unrelated ‘.online’ domain that only imitates SBI’s name." },
   { t: "https://paypal.com.secure-check.top/login", p: true, w: "The real website is secure-check.top. ‘paypal.com’ is only a subdomain placed there to fool you." },
   { t: "Your OTP is 482913. Do not share it with anyone. It expires in 10 minutes.", p: false, w: "It delivers a code you requested and asks for nothing in return." },
-  { t: "Hi, this is IT support. Reply with your password so we can upgrade your mailbox today.", p: true, w: "No genuine IT team asks for your password. The request is the red flag, whatever the tone." },
+  { t: "Hi, this is IT support. Reply with your password so we can upgrade your mailbox today.", p: true, w: "No genuine IT team asks for your password. The request is the red flag." },
   { t: "https://www.irctc.co.in/nget/train-search", p: false, w: "irctc.co.in is the official railway booking domain, and the path is an ordinary page." },
 ];
 const quiz = { i: 0, score: 0, started: false };
@@ -395,11 +357,55 @@ function showQ() {
     const right = (b.dataset.a === "1") === q.p;
     if (right) quiz.score++;
     el.querySelectorAll("[data-a]").forEach((x) => x.disabled = true);
-    $("qfb").innerHTML = '<div class="fb-q ' + (right ? "good" : "bad") + '"><b>' + (right ? "Correct." : "Not quite.") + "</b> " + esc(q.w) +
+    $("qfb").innerHTML = '<div class="fq ' + (right ? "good" : "bad") + '"><b>' + (right ? "Correct." : "Not quite.") + "</b> " + esc(q.w) +
       '</div><div class="actions"><button class="btn" id="next">' + (quiz.i === QUIZ.length - 1 ? "See result" : "Next question") + "</button></div>";
     $("next").onclick = () => { quiz.i++; showQ(); };
   });
 }
+
+/* ---------- interactivity ---------- */
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function countUp(el, to) {
+  if (calm || !to) { el.textContent = to; return; }
+  const t0 = performance.now(), dur = 900;
+  (function step(t) {
+    const k = Math.min((t - t0) / dur, 1);
+    el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) requestAnimationFrame(step);
+  })(t0);
+}
+const MULTI = ["co.in", "co.uk", "com.au", "org.in", "gov.in", "ac.in", "net.in", "edu.in"];
+$("url").addEventListener("input", (e) => {
+  const v = e.target.value.trim(), live = $("live");
+  if (v.length < 4) { live.innerHTML = ""; return; }
+  let host;
+  try { host = new URL(/^[a-z]+:\/\//i.test(v) ? v : "https://" + v).hostname; } catch { live.innerHTML = ""; return; }
+  if (!host.includes(".")) { live.innerHTML = ""; return; }
+  if (/^[\d.]+$/.test(host)) { live.innerHTML = "This link points to a raw IP address, not a website name."; return; }
+  const parts = host.split("."), n = MULTI.includes(parts.slice(-2).join(".")) ? 3 : 2;
+  const real = parts.slice(-n).join("."), sub = parts.slice(0, -n).join(".");
+  live.innerHTML = "Real website: <b>" + esc(real) + "</b>" + (sub ? " (‘" + esc(sub) + "’ is only a prefix)" : "");
+});
+let raf = 0;
+document.addEventListener("mousemove", (e) => {
+  const g = e.target.closest && e.target.closest(".glass");
+  if (g) {
+    const r = g.getBoundingClientRect();
+    g.style.setProperty("--mx", e.clientX - r.left + "px");
+    g.style.setProperty("--my", e.clientY - r.top + "px");
+  }
+  if (calm || raf) return;
+  raf = requestAnimationFrame(() => {
+    raf = 0;
+    document.body.style.setProperty("--px", (e.clientX / innerWidth - 0.5).toFixed(3));
+    document.body.style.setProperty("--py", (e.clientY / innerHeight - 0.5).toFixed(3));
+  });
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "/" || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const target = mode === "url" ? $("url") : mode === "text" ? $("text") : null;
+  if (target) { e.preventDefault(); target.focus(); }
+});
 
 health();
 </script>
