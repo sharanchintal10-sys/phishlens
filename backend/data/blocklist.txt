@@ -1,0 +1,2 @@
+# One registered domain per line (lines starting with # are ignored).
+# Paste domains from PhishTank / OpenPhish exports here, then restart the server.

@@ -1,0 +1,18 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>
+body{width:320px;margin:0;font:14px/1.5 system-ui,sans-serif;color:#0F2A3D}
+.top{padding:14px 16px;border-left:8px solid #CBD6DC}
+.top.safe{border-color:#1B7F4F}.top.suspicious{border-color:#9A5B00}.top.dangerous{border-color:#B42318}
+h1{font-size:16px;margin:0 0 4px}
+.safe h1{color:#1B7F4F}.suspicious h1{color:#9A5B00}.dangerous h1{color:#B42318}
+p{margin:4px 0}.host{color:#51697A;overflow-wrap:anywhere}
+ul{margin:6px 0 0;padding-left:18px}
+.set{border-top:1px solid #CBD6DC;padding:10px 16px;background:#F6F9FA}
+label{display:block;font-size:12px;color:#51697A;margin-bottom:4px}
+input{width:100%;box-sizing:border-box;padding:6px 8px;border:1px solid #CBD6DC;border-radius:6px}
+button{margin-top:6px;padding:5px 12px;border-radius:6px;border:1px solid #CBD6DC;background:#fff;cursor:pointer}
+</style></head><body>
+<div class="top" id="top"><h1 id="title">Checking…</h1><p class="host" id="host"></p><p id="why"></p><ul id="reasons"></ul></div>
+<div class="set"><label for="api">Scanner address</label><input id="api" type="text"><button id="save">Save</button> <button id="reset">Forget ignored sites</button></div>
+<script src="popup.js"></script>
+</body></html>

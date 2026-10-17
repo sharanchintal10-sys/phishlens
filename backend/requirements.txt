@@ -1,0 +1,12 @@
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+scikit-learn>=1.4
+joblib>=1.3
+numpy>=1.26
+pandas>=2.1
+requests>=2.31
+opencv-python-headless>=4.9
+# Optional extras
+# anthropic>=0.40        # plain-language explanations written by Claude
+# python-whois>=0.9      # domain-age checks (set ENABLE_WHOIS=1)

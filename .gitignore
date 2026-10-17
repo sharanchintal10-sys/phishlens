@@ -1,0 +1,9 @@
+﻿.venv/
+__pycache__/
+*.pyc
+.env
+backend/data/raw/
+backend/data/urls.csv
+backend/data/*.db
+backend/models/*.joblib
+.vscode/

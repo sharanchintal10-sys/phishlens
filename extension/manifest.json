@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "PhishLens",
+  "version": "1.0.0",
+  "description": "Checks every page you open for phishing in real time and warns you before you enter anything.",
+  "permissions": ["tabs", "storage", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "PhishLens", "default_popup": "popup.html" }
+}
